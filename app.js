@@ -1,17 +1,41 @@
-const express=require('express')
-const shopRoute=require('./routes/shop')
-const bodyParser=require('body-parser')
-const cors=require('cors')
-const app=express()
-app.use(bodyParser.json())
-app.use(cors({
-    origin: '*'
-}));
+const path = require('path');
 
-app.use('/shop',shopRoute)
-const mongoConnect=require('./utils/database').mongoConnect
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoConnect=require('./util/database').mongoConnect
+
+const errorController = require('./controllers/error');
+
+const app = express();
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+//   User.findById(1)
+//     .then(user => {
+//       req.user = user;
+//       next();
+//     })
+//     .catch(err => console.log(err));
+next()
+});
+
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
+
 mongoConnect(()=>{
     console.log('connected')
     app.listen(3000)
-    
 })
+
+app.use(errorController.get404);
+

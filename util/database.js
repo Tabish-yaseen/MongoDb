@@ -17,5 +17,3 @@ exports. getDb=()=>{
     }
     throw 'No database found'
 }
-
-

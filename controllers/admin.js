@@ -21,7 +21,8 @@ exports.postAddProduct = (req, res, next) => {
     title:title,
     price:price,
     description:description,
-    imageUrl:imageUrl
+    imageUrl:imageUrl,
+    userId:user
   }).then(result => {
       console.log('Created Product');
       res.redirect('/admin/products');

@@ -15,6 +15,7 @@ const userSchema=new Schema({
 
   }
 })
+
 userSchema.methods.addToCart=function(product){
   const existingProduct=this.cart.items.find((prod)=>{
           return prod.productId.toString()===product._id.toString() 
@@ -25,12 +26,18 @@ userSchema.methods.addToCart=function(product){
 }
 
 userSchema.methods.deleteItemFromCart=function(productId){
-  
+
   const updatedCartItems=this.cart.items.filter((item)=>{
           return item.productId.toString()!==productId.toString()
         })
         this.cart.items=updatedCartItems
         return this.save()
+}
+
+userSchema.methods.clearCart=function(){
+  this.cart.items=[]
+  return this.save()
+
 }
 
 module.exports=mongoose.model('users',userSchema)

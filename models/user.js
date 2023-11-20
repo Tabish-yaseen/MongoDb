@@ -11,10 +11,27 @@ const userSchema=new Schema({
     required:true
   },
   cart:{
-    products:[{productId:{type:Schema.Types.ObjectId,ref:"products",required:true},quantity:{type:Number,required:true}}]
+    items:[{productId:{type:Schema.Types.ObjectId,ref:"products",required:true},quantity:{type:Number,required:true}}]
 
   }
 })
+userSchema.methods.addToCart=function(product){
+  const existingProduct=this.cart.items.find((prod)=>{
+          return prod.productId.toString()===product._id.toString() 
+        })
+         existingProduct?existingProduct.quantity++ : this.cart.items.push({ productId: product._id, quantity: 1 })
+        
+        return this.save();
+}
+
+userSchema.methods.deleteItemFromCart=function(productId){
+  
+  const updatedCartItems=this.cart.items.filter((item)=>{
+          return item.productId.toString()!==productId.toString()
+        })
+        this.cart.items=updatedCartItems
+        return this.save()
+}
 
 module.exports=mongoose.model('users',userSchema)
 

@@ -42,42 +42,44 @@ exports.getIndex = (req, res, next) => {
     });
 };
 
-// exports.getCart = (req, res, next) => {
-//   const user=req.user
-//     user.getCart()
-//     .then(products => {
-//       console.log("heloo",products)
-//           res.render('shop/cart', {
-//             path: '/cart',
-//             pageTitle: 'Your Cart',
-//             products: products
-//           });
-//         })
-//         .catch(err => console.log(err));
-  
-// };
+exports.getCart = (req, res, next) => {
+  const userId = req.user._id;
 
-// exports.postCart = (req, res, next) => {
-//   const prodId = req.body.productId;
-//   const user=req.user
-//   Product.findById(prodId).then((product)=>{
-//    return user.addToCart(product)
-//   }).then((result)=>{
-//     console.log(result)
-//     res.redirect('/cart');
-//   })
+  User.findById(userId)
+    .populate('cart.items.productId')
+    .then(user => {
+      const products=user.cart.items
+          res.render('shop/cart', {
+            path: '/cart',
+            pageTitle: 'Your Cart',
+            products: products
+          });
+        })
+        .catch(err => console.log(err));
   
-// };
+};
 
-// exports.postCartDeleteProduct = (req, res, next) => {
-//   const prodId = req.body.productId;
-//   const user=req.user
-//   user.deleteItemFromCart(prodId)
-//     .then(result => {
-//       res.redirect('/cart');
-//     })
-//     .catch(err => console.log(err));
-// };
+exports.postCart = (req, res, next) => {
+  const prodId = req.body.productId;
+  const user=req.user
+  Product.findById(prodId).then((product)=>{
+   return user.addToCart(product)
+  }).then((result)=>{
+    console.log(result)
+    res.redirect('/cart');
+  })
+  
+};
+
+exports.postCartDeleteProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  const user=req.user
+  user.deleteItemFromCart(prodId)
+    .then(result => {
+      res.redirect('/cart');
+    })
+    .catch(err => console.log(err));
+};
 
 // exports.postOrder = (req, res, next) => {
 //   const user=req.user
